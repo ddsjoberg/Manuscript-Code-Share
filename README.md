@@ -11,7 +11,7 @@ Bochner BB, Dalbagni G, Marzouk KH, Sjoberg DD, Lee J, Donat S, Coleman JA, Vick
 
 -   [Analysis - Lee Robot vs Open RC Recurrence Comparison 10-016.do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/2018-May-European-Urology/Analysis%20-%20Lee%20Robot%20vs%20Open%20RC%20Recurrence%20Comparison%2010-016.do)
 
-Note: The analysis files require user-written Stata \*.ado files. A library of the \*.ado files is available for download from [https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
+Note: The analysis file(s) require user-written Stata \*.ado files. A library of the \*.ado files is available for download from [https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
 
 ------------------------------------------------------------------------
 
@@ -20,6 +20,6 @@ Sjoberg DD, Vickers AJ, Assel M, Dahlin A, Poon BY, Ulmert D, Lilja H. *Twenty-y
 -   [Analysis - Discrimination of PSA and KLK Panel (c-index).do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/2018-Feb-European-Urology/Analysis%20-%20Discrimination%20of%20PSA%20and%20KLK%20Panel%20(c-index).do)
 -   [Analysis - Reclassification by KLK Panel and Cumulative Incidence.do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/2018-Feb-European-Urology/Analysis%20-%20Reclassification%20by%20KLK%20Panel%20and%20Cumulative%20Incidence.do)
 
-Note: The analysis files require user-written Stata \*.ado files. A library of the \*.ado files is available for download from [https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
+Note: The analysis file(s) require user-written Stata \*.ado files. A library of the \*.ado files is available for download from [https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
 
 ------------------------------------------------------------------------
