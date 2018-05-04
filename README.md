@@ -3,10 +3,9 @@
 Code Sharing
 ------------
 
-The goal of code sharing is to increase transparency in medical research. To this end, please find code I've written to prepare the statistical results for variaous peer-reviewed manuscripts.
+The goal of code sharing is to increase transparency in medical research. To this end, please find code I've written to prepare statistical analyses for variaous peer-reviewed manuscripts.
 
-Manuscripts
------------
+------------------------------------------------------------------------
 
 Bochner BB, Dalbagni G, Marzouk KH, Sjoberg DD, Lee J, Donat S, Coleman JA, Vickers AJ, Herr H, Laudone, VP. *Randomized Trial Comparing Open Radical Cystectomy and Robot-assisted Laparoscopic Radical Cystectomy: Oncologic Outcomes* European Urology. *In press*
 
