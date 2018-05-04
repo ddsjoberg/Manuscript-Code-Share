@@ -1,5 +1,8 @@
 ---
-output: github_document
+output: 
+  md_document:
+    variant: markdown_github
+    toc: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -14,7 +17,7 @@ knitr::opts_chunk$set(
 
 ### Code Sharing
 
-In the spirit advancing knowledge, collaboration, and transparency, below please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
+In the spirit of advancing knowledge, collaboration, and transparency, below please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
 
 ---
 
