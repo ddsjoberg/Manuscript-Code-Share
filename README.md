@@ -13,8 +13,7 @@ Sjoberg DD, Vickers AJ, Assel M, Dahlin A, Poon BY, Ulmert D, Lilja H.
 *Twenty-year Risk of Prostate Cancer Death by Midlife Prostate-specific
 Antigen and a Panel of Four Kallikrein Markers in a Large
 Population-based Cohort of Healthy Men.* European Urology. 2018 Mar 5.
-[doi:10.1016/j.eururo.2018.02.016](https://doi.org/10.1016/j.eururo.2018.02.016)  
-Statistical Code
+[doi:10.1016/j.eururo.2018.02.016](https://doi.org/10.1016/j.eururo.2018.02.016)
 
   - [Analysis - Discrimination of PSA and KLK Panel
     (c-index).do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/2018-Feb-European-Urology/Analysis%20-%20Discrimination%20of%20PSA%20and%20KLK%20Panel%20\(c-index\).do)  
@@ -22,8 +21,7 @@ Statistical Code
     Incidence.do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/2018-Feb-European-Urology/Analysis%20-%20Reclassification%20by%20KLK%20Panel%20and%20Cumulative%20Incidence.do)
 
 Note: The analysis files require user-written Stata \*.ado files. A
-library of the \*.ado files is available for download from the
-[ddsjoberg/Stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library)
-repsository on github.com.
+library of the \*.ado files is available for download from
+[https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
 
 -----
