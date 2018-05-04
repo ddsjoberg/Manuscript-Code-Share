@@ -5,7 +5,7 @@
 
 ### Code Sharing
 
-In the spirit advancing knowledge, collaboration, and transparency, please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
+In the spirit advancing knowledge, collaboration, and transparency, below please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
 
 ------------------------------------------------------------------------
 
