@@ -1,5 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+------------------------------------------------------------------------
+
+### Code Sharing
+
 In the spirit advancing knowledge, collaboration, and transparency, please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
 
 ------------------------------------------------------------------------
