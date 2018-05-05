@@ -1,7 +1,6 @@
 ---
 output: 
-  md_document:
-    variant: markdown_github
+  github_document:
     toc: true
 ---
 
@@ -17,7 +16,7 @@ knitr::opts_chunk$set(
 
 ### Code Sharing
 
-In the spirit of advancing knowledge, collaboration, and transparency, below please find code I've written to prepare statistical analyses for various peer-reviewed manuscripts.
+In the spirit of collaboration, transparency, and advancing knowledge, I am posting code I've written to conduct statistical analyses for various peer-reviewed manuscripts.  I'll continue to add more code files as manuscripts are published.
 
 ---
 
