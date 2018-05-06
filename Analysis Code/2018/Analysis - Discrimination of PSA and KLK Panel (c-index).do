@@ -1,6 +1,20 @@
+/*
+PROGRAM: Analysis - Discrimination of PSA and KLK Panel (c-index)
+PROGRAMMER: Daniel
+PURPOSE: 
+The following code copmutes the c-index for two models: PSA alone, and the KLK panel
+The discrimination index is calculted in variables PSa subgroups.  
+The dataset contains imputed data (10-times).  The first section of code calculates
+the discimrination, and the second combinaes the results accross the imputations, and
+the third prepares the results to be displayed.
+*/
+
 cd "O:\Outcomes\Andrew\Analytic Projects\1 Active\Lilja MDC KLK predicts PCa Outcomes"
 use "Data\Master - Lilja MDC KLK predicts distant mets MDC Population-based Cohort with Imputed KLK.dta", clear
 
+*****************************
+**  CALCULATE THE C-INDEX  **
+*****************************
 * this porgmam calculated Harrell's c-index on the imputed data	
 capture program drop cindexmi
 program cindexmi
@@ -151,7 +165,10 @@ end
 			}
 		}
 	}
-	
+
+**********************************************
+**  COMBINE RESULTS ACROSS IMPUTATION SETS  **
+**********************************************
 *  Appending results from all imputation, subsets of patients, and PSA subsets
 	!dir "Data\Results\Discrimination\*.dta" /b > "All dta files.txt"
 	insheet using "All dta files.txt", clear delimiter(";")  
@@ -221,7 +238,9 @@ end
 	*dropping bootstraps not being presented
 	drop if _merge==2
 
-	
+*********************************************
+**  FORMAT DATA TO BE DISPLAYED IN TABLES  **
+*********************************************	
 *creating nicely formatted variables to display in tables
 g psacutdisp="PSA"+cutsymbol+string(psacut,"%9.1f")
 g psacentldisp=string(psactlcut*100,"%9.0f")+"%"
