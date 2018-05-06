@@ -1,15 +1,15 @@
 
--   [Code Sharing](#code-sharing)
--   [Published Manuscripts](#published-manuscripts)
--   [Manuscripts Under Review](#manuscripts-under-review)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ------------------------------------------------------------------------
 
 ### Code Sharing
 
-In the spirit of collaboration, transparency, and advancing knowledge, I am posting code I've written to conduct statistical analyses for various peer-reviewed manuscripts. I'll continue to add more code files as manuscripts are published.
+There is an ongoing effort in many fields to increase data-sharing, improve transparency, and reproducibility of analytic results. Sharing analytic code is an integral part of transparency and reproducibility. While sharing data does have some complexities--such as, patient protected health information and data ownership issues--sharing analytic code is straightforward and without regulatory hurdles. Sharing analytic code can increase its use by other researchers, and broaden the impact of the research. Moreover, knowing your code is freely available may lead researchers to engage in better coding practices. Despite its simplicity and value, few journals request or require submission of analytic code along with the manuscript.
+
+In the spirit of collaboration, transparency, and advancing knowledge, I am posting analytic code I've written for various peer-reviewed manuscripts. My hope is others will find the code useful, see the value and begin (or continue) to publish their own code. I also hope journals will see the value and begin to publish analytic code alongside each manuscript.
+
+Code from published manuscripts are located [here](#published-manuscripts), and code for manuscripts that are currently under review are [here](#manuscripts-under-review).
 
 ------------------------------------------------------------------------
 
