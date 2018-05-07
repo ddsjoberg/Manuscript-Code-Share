@@ -2,19 +2,21 @@
 PROGRAM: Analysis - Discrimination of PSA and KLK Panel (c-index)
 PROGRAMMER: Daniel
 PURPOSE: 
-The following code copmutes the c-index for two models: PSA alone, and the KLK panel
-The discrimination index is calculted in variables PSa subgroups.  
-The dataset contains imputed data (10-times).  The first section of code calculates
-the discimrination, and the second combinaes the results accross the imputations, and
-the third prepares the results to be displayed.
+The following code copmutes the c-index for various models: PSA alone, free to total ratio alone, 
+total+PSA+free PSA+age, and the KLK panel+age.
+The discrimination index is calculted in variables PSA subgroups (e.g. PSA>=1, PSA<1, PSA>50th centile).  
+The dataset contains imputed data (10-times).  
+1. The first section of code calculates the discimrination
+2. The second combines the results accross the imputations.
+3. And the third prepares the results to be displayed.
 */
 
 cd "O:\Outcomes\Andrew\Analytic Projects\1 Active\Lilja MDC KLK predicts PCa Outcomes"
 use "Data\Master - Lilja MDC KLK predicts distant mets MDC Population-based Cohort with Imputed KLK.dta", clear
 
-*****************************
-**  CALCULATE THE C-INDEX  **
-*****************************
+****************************************
+**  Section 1: CALCULATE THE C-INDEX  **
+****************************************
 * this porgmam calculated Harrell's c-index on the imputed data	
 capture program drop cindexmi
 program cindexmi
@@ -44,6 +46,7 @@ program cindexmi
 			keep if `cohort'
 
 			*creating local to store range of PSA values to keep
+				* PSA LEVEL is a known cutpoint for PSA
 				if "`cuttype'"=="psalevel" {
 					local psacut=`cut'
 					*getting the centile
@@ -53,11 +56,13 @@ program cindexmi
 						local nabove=`r(N)'
 					local ctlcut=((`nabove' + `nbelow')/2)/`=_N'	
 				}
+				* cutpoint for a PSA percentile
 				else if "`cuttype'"=="psacentile" {
 					local ctlcut=`cut'/100
 					centile tpsa, c(`cut')
 						local psacut=`r(c_1)'
 				}
+				* print error if misspecified
 				else {
 					disp as err "cuttype must be psalevel psacentile"
 					exit 100
@@ -77,12 +82,13 @@ program cindexmi
 
 			*as there are so many imputed datasets, ensuring that there is enough data to calculate the c-index
 				if `caseN'>=7 & `caseN'<`N' {
+					* calculating the c-index and posting results
 					stcox `covar' 
 					estat concord
 					post `memhold' ("`outcome'") ("`covar'") ("`cuttype'") ("`cutsymbol'") ///
 									 ("`cohort'") (`cut') (`psacut') (`ctlcut') (`m') (`N') (`caseN') (`r(C)') ("")	
 				}
-			*if not enough data, posting a missing
+			*if not enough data, posting a missing with note why c-index coulud not be calculated
 				else if !(`caseN'>=7) post `memhold' ("`outcome'") ("`covar'") ("`cuttype'") ("`cutsymbol'") ///
 									 ("`cohort'") (`cut') (`psacut') (`ctlcut') (`m') (`N') (`caseN') (.) ("Too Few Events")	
 				else if !(`caseN'<`N') post `memhold' ("`outcome'") ("`covar'") ("`cuttype'") ("`cutsymbol'") ///
@@ -99,7 +105,8 @@ program cindexmi
 end
 
 						
-*  C-INDEX FOR TPSA and KLK Panel
+*  HERE we loop through age groups (defined in te variable cohort), and the various models and calculate the c-index
+*  The c-=index is calculated for both cancer diagnosis (pca) and death from cancer (dod)
 	x
 	use "Data\Master - Lilja MDC KLK predicts distant mets MDC Population-based Cohort with Imputed KLK.dta", clear
 	levelsof cohort, local(cohortlevels)
@@ -107,19 +114,19 @@ end
 	foreach outcome in /*pca*/ dod {
 		foreach cohortn in `cohortlevels' {
 			foreach covar in tpsa protectriskhg ftpsa ftpsariskhg {
-					* above cuts
+					* above cuts (e.g. PSA>=2)
 					cindexmi, cohort(cohort==`cohortn') cuttype(psalevel) cutsymbol(>=) cutlist(0 1 1.5 2 3) outcome(`outcome') covar(`covar') ///
 						saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' Cohort `cohortn' above psalevel.dta")
 
-					* below cuts
+					* below cuts (e.g. PSA<1)
 					cindexmi, cohort(cohort==`cohortn') cuttype(psalevel) cutsymbol(<) cutlist(1) outcome(`outcome') covar(`covar') ///
 						saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' Cohort `cohortn' below psalevel.dta")
 
-					* above centile
+					* above centile (e.g. PSA>= 50th percentile)
 					cindexmi, cohort(cohort==`cohortn') cuttype(psacentile) cutsymbol(>=) cutlist(50 75 90) outcome(`outcome') covar(`covar') ///
 						saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' Cohort `cohortn' above psacentile.dta")
 
-					* below centile
+					* below centile (e.g. PSA< 50th percentile)
 					cindexmi, cohort(cohort==`cohortn') cuttype(psacentile) cutsymbol(<) cutlist(10 25 50) outcome(`outcome') covar(`covar') ///
 						saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' Cohort `cohortn' below psacentile.dta")
 
@@ -128,7 +135,8 @@ end
 	}
 
 
-	* repeating with a few more age cohorts
+	* repeating with a few more age cohorts.  These age groups are specified in the agegrp loop 
+	* (where previosuly they were defined in the cohort variable)
 	set more off
 	foreach outcome in /*pca*/ dod {
 		foreach covar in tpsa protectriskhg /*ftpsa ftpsariskhg*/ {
@@ -137,7 +145,7 @@ end
 								"age<60 & tpsa<=25" "age>=60  & tpsa<=25" ///
 								"!mi(cohort) & tpsa<=4" "!mi(cohort) & tpsa<=10" "!mi(cohort) & tpsa<=25" ///
 								"!mi(cohort)" "age<60" "age>=60" "(age>=60 & age<70)" "(age>=55 & age<70)" "age<55" {
-				*creating age group that is file name friendly
+				*creating age group name that is file name friendly
 				local agefilename="`agegrp'"
 				local agefilename=subinstr("`agefilename'",">="," ge ",.)
 				local agefilename=subinstr("`agefilename'","<="," le ",.)
@@ -145,20 +153,19 @@ end
 				local agefilename=subinstr("`agefilename'",">" ," gt ",.)
 				noi disp "`agefilename'"
 				
-
-				* above cuts
+				* above cuts (e.g. PSA>=2)
 				cindexmi, cohort(`agegrp') cuttype(psalevel) cutsymbol(>=) cutlist(0 1 1.5 2 3) outcome(`outcome') covar(`covar') ///
 					saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' `agefilename' above psalevel.dta")
 
-				* below cuts
+				* below cuts (e.g. PSA<1)
 				cindexmi, cohort(`agegrp') cuttype(psalevel) cutsymbol(<) cutlist(1) outcome(`outcome') covar(`covar') ///
 					saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' `agefilename' below psalevel.dta")
 
-				* above centile
+				* above centile (e.g. PSA>= 50th percentile)
 				cindexmi, cohort(`agegrp') cuttype(psacentile) cutsymbol(>=) cutlist(50 75 90) outcome(`outcome') covar(`covar') ///
 					saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' `agefilename' above psacentile.dta")
 
-				* below centile
+				* below centile (e.g. PSA< 50th percentile)
 				cindexmi, cohort(`agegrp') cuttype(psacentile) cutsymbol(<) cutlist(10 25 50) outcome(`outcome') covar(`covar') ///
 					saving("Data\Results\Discrimination\Results - Discrimination of `covar' `outcome' `agefilename' below psacentile.dta")
 			
@@ -166,22 +173,25 @@ end
 		}
 	}
 
-**********************************************
-**  COMBINE RESULTS ACROSS IMPUTATION SETS  **
-**********************************************
+*********************************************************
+**  Section 2. COMBINE RESULTS ACROSS IMPUTATION SETS  **
+*********************************************************
 *  Appending results from all imputation, subsets of patients, and PSA subsets
 	!dir "Data\Results\Discrimination\*.dta" /b > "All dta files.txt"
 	insheet using "All dta files.txt", clear delimiter(";")  
 	drop if index(v1,"Bootstrap")
 
-*appending datasets, and extracting data from the file name
+*appending datasets together to prepare results 
+	* number of datasets t ocombine
 	local N=`=_N'
 	local i=0
+	* saving a local var with each dataset's name
 	while `i'<`N' {
 		local ++i	
 		local ds`i'=v1[`i']
 	}
 
+	* brining each dataset into memory and appending all together.
 	local i=1
 	use "Data\Results\Discrimination\\`ds`i''", clear
 	while `i'<`N' {
@@ -191,23 +201,22 @@ end
 	compress
 
 	
-**combining stats over 10 imputations
+**combining stats over 10 imputations, by taking the mean over the 10 imputed sets
 	g errorn=!mi(error)
 	collapse psacut psactlcut n casen cindex errorn, by(outcome covar cuttype cutsymbol cohort cutraw)
 	tab errorn
 	widetab cohort psacut errorn cindex if covar=="tpsa" & psacut==0 & outcome=="dod"
 
 
-
 *not displaying all results
+	* not displaying results for every cominbation of the data caluclated.
 	drop if cuttype=="psacentile" & cutsymbol=="<" & inlist(cutraw,10,25)
 	drop if outcome!="dod"
 	keep if inlist(cohort,"!mi(cohort)")
-	*keep if inlist(cohort,"!mi(cohort)","(age>=60 & age<70)","age<60","age>=60")
-	*keep if inlist(cohort,"!mi(cohort) & tpsa<=10","!mi(cohort) & tpsa<=25","!mi(cohort) & tpsa<=4")
 	drop if covar=="ftpsa"
 
-*calculatind differnece in cindex from tpsa alone
+*calculating difference in cindex from tpsa alone
+* extracting PSA alone, and merging it back into the master set.
 	count
 	foreach x in x {
 		preserve 
@@ -220,7 +229,7 @@ end
 	}
 	merge m:1 outcome cuttype cutsymbol cohort cutraw using `cindextpsa', nogen
 
-*calculatind differnece in cidnex from total and free PSA
+*calculating differnece in cidnex from total and free PSA (same as was done for PSA)
 	count
 	foreach x in x {
 		preserve 
@@ -233,36 +242,45 @@ end
 	}
 	merge m:1 outcome cuttype cutsymbol cohort cutraw using `cindexftpsariskhg', nogen
 	
-******* merging in bootstrapped ocnfidence intervals
+******* merging in bootstrapped confidence intervals (calculated in separate analysis file)
 	merge 1:1 outcome covar cuttype cutsymbol cohort cutraw using "Data\Results\Results - Discrimination Bootstrap Confidence Intervals.dta",
 	*dropping bootstraps not being presented
 	drop if _merge==2
 
-*********************************************
-**  FORMAT DATA TO BE DISPLAYED IN TABLES  **
-*********************************************	
+********************************************************
+**  Section 3. FORMAT DATA TO BE DISPLAYED IN TABLES  **
+********************************************************
+* this section is a bunch of tedious formatting code to get the results looking presentable.
+
 *creating nicely formatted variables to display in tables
-g psacutdisp="PSA"+cutsymbol+string(psacut,"%9.1f")
-g psacentldisp=string(psactlcut*100,"%9.0f")+"%"
+g psacutdisp="PSA"+cutsymbol+string(psacut,"%9.1f") /// (e.g. PSA >= 4)
+g psacentldisp=string(psactlcut*100,"%9.0f")+"%" 
 format %9.4f cindex
 format %9.0f n casen
 
 *more formatting of results to display in tables.
+	* rounding c-index
 	g cdisp=trim(string(cindex,"%9.3f"))
-	replace cdisp="NA" if errorn>0.2
+		* display NA if there were too many sets where c-index could not be calculated
+		replace cdisp="NA" if errorn>0.2
+	* rounding differnece in cindex
 	g cdispdelta=trim(string(cindex - cindextpsa,"%9.3f"))
-	replace cdispdelta="NA" if errorn>0.2 
-	replace cdispdelta="--" if covar=="tpsa"
+		* display NA if there were too many sets where c-index could not be calculated
+		replace cdispdelta="NA" if errorn>0.2 
+		* display -- if PSA (which is the base model, so the improvemetn is of course 0)
+		replace cdispdelta="--" if covar=="tpsa"
+	* repeat but for imprevoemtn over free+total PSA+age
 	g cdispdeltaftpsa=trim(string(cindex - cindexftpsariskhg,"%9.3f"))
-	replace cdispdeltaftpsa="NA" if errorn>0.2 
-	replace cdispdeltaftpsa="--" if inlist(covar,"tpsa","ftpsariskhg")
+		replace cdispdeltaftpsa="NA" if errorn>0.2 
+		replace cdispdeltaftpsa="--" if inlist(covar,"tpsa","ftpsariskhg")
 
+	* rounding/formatting the bootstrap-estimated 95% CI.
 	g cdispdeltaci=trim(string(cdispdeltalb,"%9.3f"))+", "+trim(string(cdispdeltaub,"%9.3f")) if covar!="tpsa"
 		replace cdispdeltaci="--" if covar=="tpsa"
 	g cdispdeltaftpsaci=trim(string(cdispdeltaftpsalb,"%9.3f"))+", "+trim(string(cdispdeltaftpsaub,"%9.3f")) if !inlist(covar,"tpsa","ftpsariskhg")
 		replace cdispdeltaftpsaci="--" if inlist(covar,"tpsa","ftpsariskhg")
 	
-*ordering results
+*ordering results for the table
 	g outcomesort=1 if outcome=="cancer"
 	replace outcomesort=2 if outcome=="mets"
 	replace outcomesort=3 if outcome=="dod"

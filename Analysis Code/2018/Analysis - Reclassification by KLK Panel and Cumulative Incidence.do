@@ -104,6 +104,7 @@ program cuminc
 		restore
 end
 
+**  testing that th functio nworks properly with an example
 use "Data\Master - Lilja MDC KLK predicts distant mets MDC Population-based Cohort with Imputed KLK.dta", clear
 cuminc, cohort(!mi(cohort)) subgroup(tpsa>=0) outcome(dod) by(pca)
 
@@ -121,15 +122,18 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 		}
 		
 		local count=0
+		* looping over varying age cohorts for which the reclassification stats will be calculated.
 		foreach cohort in 	"age<60" /*"age>=60"*/ ///
 							/*"age<60 & !(dod==1 & ttdod < 3)" "age>=60 & !(dod==1 & ttdod < 3)"*/ ///
 							/*"age<60 & !(dod==1 & ttdod < 5)" "age>=60 & !(dod==1 & ttdod < 5)" */ ///
 							/*"age>=60 & age<70" "cohort==50" "cohort==55" "cohort==60" "cohort==65" "cohort==70" "!mi(cohort)"*/ {
+			* looping over various PSA subgroups here
 			foreach psagroup in /*"tpsa<=0.5" "tpsa<=0.75" "tpsa<=1" "tpsa<=1.25" "tpsa<=1.5" "tpsa<=1.75" "tpsa<=1.8" "tpsa<=2"*/ ///
 								/*"tpsa>=0" "tpsa>=1.5" "tpsa>=2" "tpsa>=3" "inrange(tpsa,2,3)"*/ ///
 								/*"inrange(tpsa,0,25)" "inrange(tpsa,1.5,25)" "inrange(tpsa,2,25)" "inrange(tpsa,3,25)"*/ ///
 								"inrange(tpsa,1.5,10)" /*"inrange(tpsa,2,10)" "inrange(tpsa,3,10)"*/ ///
 								/*"inrange(tpsa,1.5,4)" "inrange(tpsa,2,4)"*/ {
+				* calcualting the reclassification statistics here
 				local ++count
 				cuminc, cohort(`cohort') subgroup(`psagroup') outcome(dod) ///
 					saving("Data\Results\Cum Inc Reclassification\Results - Cum Inc Reclassification `count'.dta", replace)
@@ -186,12 +190,14 @@ use  "Data\Results\Results - Cum Inc Reclassification", clear
 * combining descriptive stats about cohort sizes
 	by cohort outcome subgroup protectriskhg??? ftpsariskhg???: egen nklksubgroup_mean=mean(nklksubgroup)
 	by cohort outcome subgroup protectriskhg??? ftpsariskhg???: egen ntot_mean=mean(ntot)
-
+	
+	* keeping one line per combinatio of age, PSA subgroup, etc. (continuing with calculations for MI data's SEs)
 	keep if m==1
 	g failure_ub=failure_central^(exp(invnormal(0.975)*loglogtotalse))*100
 	g failure_lb=failure_central^(exp(-invnormal(0.975)*loglogtotalse))*100
 	replace failure_central=failure_central*100	
 	
+	* formatting the results to display in a table.
 	g fail_disp=trim(string(failure_central,"%9.2f"))+ " ("+trim(string(failure_ub,"%9.2f"))+" - "+trim(string(failure_lb,"%9.2f"))+")"
 	replace fail_disp="0 (NA)" if failure_central==0
 	replace fail_disp="NA (NA)" if failure_central==.
@@ -204,24 +210,26 @@ use  "Data\Results\Results - Cum Inc Reclassification", clear
 	capture drop klksubgroupprop
 	g klksubgroupprop=string(nklksubgroup_mean/ntot_mean*100,"%9.0f")+"%" if klksplit==1
 	
-
-*  
-g subgroupriskabove=. 
-g subgrouprisk = "" 
-	foreach v of varlist protectriskhg??? ftpsariskhg??? {
-		replace subgrouprisk=substr("`v'",1,length("`v'")-3) if !mi(`v')
-		replace subgroupriskabove=`v' if !mi(`v')
-	}
+	g subgroupriskabove=. 
+	g subgrouprisk = "" 
+		foreach v of varlist protectriskhg??? ftpsariskhg??? {
+			replace subgrouprisk=substr("`v'",1,length("`v'")-3) if !mi(`v')
+			replace subgroupriskabove=`v' if !mi(`v')
+		}
 	
 	
-	
-	
-	
+* getting all levels of ochort to loop over for displaying statistics
 levelsof cohort, local(lcohort)
 	*local lcohort=`"age>=60 age<60"'
 levelsof subgroup, local(lsubgroup)
 	*local lsubgroup=`"inrange(tpsa,1.5,4) inrange(tpsa,2,4)"'
 
+	
+	
+***************************
+* looping over age cohorts, and creating figure of relcassificatoin results.
+* also saving out estiamtes to be displayed in a table.
+***************************	
 g precalssified=""
 g cohortdisp=""
 foreach cohort in `lcohort' {
@@ -303,16 +311,18 @@ foreach cohort in `lcohort' {
 		else if "`subgroup'"=="tpsa>=3" local subgroupdisp="PSA{&ge}3"
 		else local subgroupdisp="`subgroup'"
 		
-		**  cycling over risk score type
+		**  cycling over risk score type, and creating figures for each.
 		foreach risk in protectriskhg ftpsariskhg {
+				* creating label for the risk model
 				if "`risk'"=="protectriskhg" local risktitle="ProtecT" 
 				else if "`risk'"=="ftpsariskhg" local risktitle="Age, tPSA, fPSA" 
 		
+				* looping over every risk cutpoint.
 				local klkgraphlist=""
 				foreach klkcut in 025 050 060 075 100 {
 					local klkdisp=string(`klkcut'/10,"%9.1f")+"%"
 					
-					*getting proportions in klk subgroups
+					*getting proportions in klk subgroups (preserving data as to not 
 					qui foreach x in x {
 						preserve
 						*set trace on
@@ -346,6 +356,7 @@ foreach cohort in `lcohort' {
 							ylabel(`psa_mid' `"All men `subgroupdisp'"' `psa_above' `"`klk1' of men `subgroupdisp'"' `psa_below' `"`klk0' of men `subgroupdisp'"', angle(0) labsize(vsmall) axis(2)) ///
 							saving("Figures\GPH\Figure - Cum Inc Reclassification by KLK `cohortdisp', `subgroupdisp', KLK threshold `klkcut'.gph", replace)
 
+					* saving out figure to folder
 					if inlist("`klkcut'","060","075","100") {
 						local klkgraphlist=`"`klkgraphlist' "Figures\GPH\Figure - Cum Inc Reclassification by `risk' `cohortdisp', `subgroupdisp', KLK threshold `klkcut'.gph""'
 						graph export "Figures\Figure - Cum Inc Reclassification by `risk' `cohortdisp', `subgroupdisp', `risk' threshold `klkcut'.tif", replace
@@ -362,6 +373,7 @@ foreach cohort in `lcohort' {
 		}
 	}
 }
+* saving all estimates to be reported in tables
 save "Data\Results\Results - Cum Inc Reclassification (imputations combined).dta", replace
 
 
@@ -385,13 +397,13 @@ graph combine 	"Figures\GPH\Figure - Cum Inc Reclassification by protectriskhg A
 	
 	* creating a sort order for the table
 	g tpsasubgroupsort=1 if subgroup=="tpsa>=0"
-	replace tpsasubgroupsort=2 if subgroup=="inrange(tpsa,0,25)"
-	replace tpsasubgroupsort=2.5 if subgroup=="tpsa>=1.5"
-	replace tpsasubgroupsort=3 if subgroup=="tpsa>=2"
-	replace tpsasubgroupsort=4 if subgroup=="inrange(tpsa,2,25)"
-	replace tpsasubgroupsort=5 if subgroup=="tpsa>=3"
-	replace tpsasubgroupsort=6 if subgroup=="inrange(tpsa,3,25)"
-	replace tpsasubgroupsort=7 if subgroup=="inrange(tpsa,2,3)"
+		replace tpsasubgroupsort=2 if subgroup=="inrange(tpsa,0,25)"
+		replace tpsasubgroupsort=2.5 if subgroup=="tpsa>=1.5"
+		replace tpsasubgroupsort=3 if subgroup=="tpsa>=2"
+		replace tpsasubgroupsort=4 if subgroup=="inrange(tpsa,2,25)"
+		replace tpsasubgroupsort=5 if subgroup=="tpsa>=3"
+		replace tpsasubgroupsort=6 if subgroup=="inrange(tpsa,3,25)"
+		replace tpsasubgroupsort=7 if subgroup=="inrange(tpsa,2,3)"
 
 	sort cohort tpsasubgroupsort klksplit protectriskhg??? ftpsariskhg???
 

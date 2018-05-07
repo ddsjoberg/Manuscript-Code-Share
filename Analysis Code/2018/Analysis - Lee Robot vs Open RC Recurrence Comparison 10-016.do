@@ -41,7 +41,7 @@ tab1 recur dod dead
 	* testing for a difference in recurrence by surgery type (log-rank)
 	sts test surgtype
 	
-	* kaplan meier figures for recurrence
+	* kaplan meier figures for recurrence (first survival, then failure)
 		sts graph, fail by(surgtype) xlabel(0/6) tmax(6) scheme(s1mono) ///
 				plot1opts(lpattern(dash) lcolor(black)) ///
 				plot2opts(lpattern(solid) lcolor(black)) ///
@@ -75,7 +75,7 @@ tab1 recur dod dead
 	* testing for differnce in death from disease (dod)
 	sts test surgtype
 	
-	* kaplan meier figures for dod
+	* kaplan meier figures for dod (first survival, then failure)
 		sts graph, fail by(surgtype) xlabel(0/6) tmax(6) scheme(s1mono) ///
 				plot1opts(lpattern(dash) lcolor(black)) ///
 				plot2opts(lpattern(solid) lcolor(black)) ///
@@ -104,9 +104,12 @@ tab1 recur dod dead
 ********************************************
 **  death from any casue (dead) analyses  **
 ********************************************
+	* setting data for OS analyes
 	stset ttdead dead
 
+	* testing for differnece in OS by surgery type
 	sts test surgtype
+	* kaplan meier figures for OS 
 	sts graph, fail by(surgtype) xlabel(0/6) tmax(6) scheme(s1mono) ///
 			plot1opts(lpattern(dash) lcolor(black)) ///
 			plot2opts(lpattern(solid) lcolor(black)) ///
@@ -132,7 +135,7 @@ graph export "Figures\Kaplan Meier - Combined (risk-free) by Surgery Type.tif", 
 
 
 
-***  competing risk analysis looking at site of first recurrence.
+***  competing risk analysis looking at site of first recurrence.  ***
 use "Data\Master - Lee Robot vs Open RC Recurrence Comparison 10-016.dta", clear
 tab surgtype
 
