@@ -9,7 +9,8 @@ There is an ongoing effort in many fields to improve data-sharing, transparency,
 
 In the spirit of collaboration, transparency, and advancing knowledge, I am posting analytic code I’ve written for various peer-reviewed manuscripts. My hope is others will find the code useful, see the value and begin (or continue) to publish their own code. I also hope journals will see the value and begin to publish analytic code alongside each manuscript.
 
-Code from published manuscripts are located [here](#published-manuscripts), and code for manuscripts currently under review are [here](#manuscripts-under-review).
+-   [Published Manuscripts](#published-manuscripts)
+-   [Manuscripts Under Review](#manuscripts-under-review)
 
 ------------------------------------------------------------------------
 
