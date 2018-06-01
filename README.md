@@ -25,12 +25,12 @@ The analysis file(s) require user-written Stata \*.ado files. A library of the \
 
 ------------------------------------------------------------------------
 
-### Manuscripts Under Review
-
-Bochner BB, Dalbagni G, Marzouk KH, Sjoberg DD, Lee J, Donat S, Coleman JA, Vickers AJ, Herr H, Laudone, VP. *Randomized Trial Comparing Open Radical Cystectomy and Robot-assisted Laparoscopic Radical Cystectomy: Oncologic Outcomes*
+Bochner BH, Dalbagni G, Marzouk KH, Sjoberg DD, Lee J, Donat SM, Coleman JA, Vickers A, Herr HW, Laudone VP. *Randomized Trial Comparing Open Radical Cystectomy and Robot-assisted Laparoscopic Radical Cystectomy: Oncologic Outcomes.* European urology. 2018 May 18. [doi:10.1016/j.eururo.2018.04.030](https://doi.org/10.1016/j.eururo.2018.04.030)
 
 -   [Analysis - Lee Robot vs Open RC Recurrence Comparison 10-016.do](https://github.com/ddsjoberg/Manuscript-Code-Share/blob/master/Analysis%20Code/2018/Analysis%20-%20Lee%20Robot%20vs%20Open%20RC%20Recurrence%20Comparison%2010-016.do)
 
 The analysis file(s) require user-written Stata \*.ado files. A library of the \*.ado files is available for download at [https://github.com/ddsjoberg/stata-ado-library](https://github.com/ddsjoberg/Stata-ado-Library).
+
+### Manuscripts Under Review
 
 ------------------------------------------------------------------------
